@@ -8,5 +8,6 @@ function multiplicacion(){
 function FuncionParametos(a, b){
     return a+b;
 }
+
 console.log(multiplicacion());
 console.log(FuncionParametos(1,1));
