@@ -1,23 +1,69 @@
-var express = require('express');
-var app = express();
+// require the http module of node.js
+var http = require('http');
+// require the dispatcher module
+var  HttpDispatcher = require('httpdispatcher');
+var dispatcher     = new HttpDispatcher();
+// define the port of access for your server
+const PORT = 8080;
 
-app.get('/', function (req, res) {
-    res.send('<b>Hola</b> mi primer servidor http');
+// We need a function which handles requests and send response
+function handleRequest(request, response){
+    try {
+        // log the request on console
+        console.log(request.url);
+        // Dispatch
+        dispatcher.dispatch(request, response);
+    } catch(err) {
+        console.log(err);
+    }
+}
+
+// Create a server
+var myFirstServer = http.createServer(handleRequest);
+
+// add some routes
+
+//A sample GET request
+dispatcher.onGet("/", function(req, res) {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.end("<h1>Mi primer server</h1>");
 });
 
-// route with parameters
-app.get('/hello/:name', function(req, res) {
-    console.log(req.params);
-    res.send({hello: req.params.name});
+dispatcher.onGet('/hello/name', function(req, res) {
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    res.end(JSON.stringify({ name: req.params.name}));
 });
 
-// Change the 404 message modifing the middleware
-app.use(function(req, res, next) {
-    res.status(404).send("Ohhhhhhhh, Esa ruta no existe. Tenga un feliz dia :)");
+dispatcher.onError(function(req, res) {
+    res.writeHead(404);
+    res.end("Ohhhhhhhh, Esa ruta no existe. Tenga un feliz dia :)");
 });
 
-// start the server in the port 3000 !
-app.listen(3000, function () {
-    console.log('Ejemplo de servidor en el puerto 3000.');
+// Start the server !
+myFirstServer.listen(PORT, function(){
+    // Callback triggered when server is successfully listening. Hurray!
+    console.log("Server listening on: http://localhost:%s", PORT);
 });
+
+///////////////////////////////////////////////////////////////////////////////////
+var finalhandler = require('finalhandler')
+var http = require('http')
+var Router = require('router')
+ 
+var router = Router()
+router.get('/', function (req, res) {
+  res.setHeader('Content-Type', 'text/plain; charset=utf-8')
+  res.end('Mi primer servidor http!')
+})
+
+router.get('/hello/:name', function (req, res) {
+    res.setHeader('Content-Type', 'application/json')
+    res.end(JSON.stringify({ name: req.params.name}))
+  })
+ 
+var server = http.createServer(function(req, res) {
+  router(req, res, finalhandler(req, res))
+})
+ 
+server.listen(3000)
 

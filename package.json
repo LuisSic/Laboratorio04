@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/LuisSic/Laboratorio04#readme",
   "dependencies": {
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "httpdispatcher": "^2.1.2",
+    "router": "^1.3.3"
   }
 }
